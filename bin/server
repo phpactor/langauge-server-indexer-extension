@@ -1,0 +1,61 @@
+#!/usr/bin/env php
+<?php
+
+use Amp\Loop;
+use Phpactor\Container\Container;
+use Phpactor\Container\PhpactorContainer;
+use Phpactor\Extension\ClassToFile\ClassToFileExtension;
+use Phpactor\Extension\ComposerAutoloader\ComposerAutoloaderExtension;
+use Phpactor\Extension\Console\ConsoleExtension;
+use Phpactor\Extension\SourceCodeFilesystem\SourceCodeFilesystemExtension;
+use Phpactor\Extension\WorseReflection\WorseReflectionExtension;
+use Phpactor\FilePathResolverExtension\FilePathResolverExtension;
+use Phpactor\Extension\LanguageServerWorkspaceQuery\LanguageServerWorkspaceQueryExtension;
+use Phpactor\Extension\LanguageServer\LanguageServerExtension;
+use Phpactor\Extension\Logger\LoggingExtension;
+use Phpactor\LanguageServer\Adapter\DTL\DTLArgumentResolver;
+use Phpactor\LanguageServer\Core\Connection\StreamConnection;
+use Phpactor\LanguageServer\Core\Connection\TcpServerConnection;
+use Phpactor\LanguageServer\Core\Session\Workspace;
+use Phpactor\LanguageServer\Extension\Core\Initialize;
+use Phpactor\LanguageServer\Core\IO\StreamIO;
+use Phpactor\LanguageServer\Core\ChunkIO\TcpIO;
+use Phpactor\LanguageServer\Core\Dispatcher\Dispatcher\ErrorCatchingDispatcher;
+use Phpactor\LanguageServer\Core\Dispatcher\Dispatcher\MethodDispatcher;
+use Phpactor\LanguageServer\Core\Handlers;
+use Phpactor\LanguageServer\Core\Server;
+use Phpactor\LanguageServer\Core\Session\SessionManager;
+use Phpactor\LanguageServer\Handler\TextDocument\TextDocumentHandler;
+use Phpactor\LanguageServer\LanguageServerBuilder;
+use Phpactor\WorkspaceQuery\Extension\WorkspaceQueryExtension;
+use Psr\Log\AbstractLogger;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$container = PhpactorContainer::fromExtensions([
+    LoggingExtension::class,
+    LanguageServerExtension::class,
+    WorkspaceQueryExtension::class,
+    LanguageServerWorkspaceQueryExtension::class,
+    FilePathResolverExtension::class,
+    ConsoleExtension::class,
+    SourceCodeFilesystemExtension::class,
+    WorseReflectionExtension::class,
+    ClassToFileExtension::class,
+    ComposerAutoloaderExtension::class,
+], [
+    FilePathResolverExtension::PARAM_APPLICATION_ROOT => __DIR__ . '/..',
+    'console.verbosity' => OutputInterface::VERBOSITY_DEBUG,
+    LoggingExtension::PARAM_ENABLED => true,
+    LoggingExtension::PARAM_LEVEL => 'debug',
+    LoggingExtension::PARAM_PATH => 'php://stderr',
+]);
+
+$output = new ConsoleOutput();
+$output->setVerbosity(OutputInterface::VERBOSITY_VERY_VERBOSE);
+$application = new Application();
+$application->setCommandLoader($container->get(ConsoleExtension::SERVICE_COMMAND_LOADER));
+$application->run();

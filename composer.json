@@ -1,0 +1,44 @@
+{
+    "name": "phpactor/language-server-workspace-query-extension",
+    "description": "Phpactor Language Server Handlers",
+    "license": "MIT",
+    "type": "phpactor-extension",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Daniel Leech",
+            "email": "daniel@dantleech.com"
+        }
+    ],
+
+    "require": {
+        "phpactor/container": "^1.0",
+        "phpactor/language-server-extension": "^0.2",
+        "phpactor/workspace-query": "^0.2.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.0",
+        "phpunit/phpunit": "^8.0",
+        "friendsofphp/php-cs-fixer": "^2.17@dev",
+        "phpactor/source-code-filesystem-extension": "^0.1.0@dev",
+        "phpactor/worse-reflection-extension": "^0.2.0@dev",
+        "phpactor/class-to-file-extension": "^0.1.0@dev",
+        "phpactor/composer-autoloader-extension": "^0.1.0@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Phpactor\\Extension\\LanguageServerWorkspaceQuery\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Phpactor\\Extension\\LanguageServerWorkspaceQuery\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "phpactor.extension_class": "Phpactor\\Extension\\LanguageServerWorkspaceQuery\\LanguageServerWorkspaceQueryExtension",
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
+}
