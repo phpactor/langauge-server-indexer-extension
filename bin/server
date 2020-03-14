@@ -54,6 +54,7 @@ $container = PhpactorContainer::fromExtensions([
     LoggingExtension::PARAM_PATH => 'php://stderr',
 ]);
 
+
 $output = new ConsoleOutput();
 $output->setVerbosity(OutputInterface::VERBOSITY_VERY_VERBOSE);
 $application = new Application();

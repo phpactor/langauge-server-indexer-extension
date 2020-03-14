@@ -56,7 +56,7 @@ class IndexerHandler implements ServiceProvider
     public function services(): array
     {
         return [
-            'indexerService' => 'indexerService'
+            'indexerService'
         ];
     }
 
@@ -67,6 +67,7 @@ class IndexerHandler implements ServiceProvider
                 'type' => MessageType::INFO,
                 'message' => 'Indexer started',
             ]));
+
             $job = $this->indexer->getJob();
 
             foreach ($job->generator() as $file) {
@@ -76,6 +77,7 @@ class IndexerHandler implements ServiceProvider
                 ]));
                 yield new Success();
             }
+
 
             return new Success();
         });
