@@ -3,6 +3,7 @@
 namespace Phpactor\Extension\LanguageServerWorkspaceQuery\Handler;
 
 use Amp\Deferred;
+use Amp\Delayed;
 use Amp\Promise;
 use Amp\Success;
 use Generator;
@@ -83,24 +84,16 @@ class IndexerHandler implements ServiceProvider
 
             $index = 0;
             foreach ($job->generator() as $file) {
-                $this->showMessage($transmitter, sprintf(
-                    'Indexed: %s',
-                    basename($file)
-                ));
-                yield new Success();
+                yield new Delayed(1);
             }
 
             $this->showMessage($transmitter, 'Index initialized, watching ...');
-
             while ($modifiedFile = yield $this->watcher->wait()) {
                 assert($modifiedFile instanceof FileModification);
-                $job = $this->indexer->getJob(rtrim($modifiedFile->watchedFilename(), '/'));
+                $job = $this->indexer->getJob(rtrim($modifiedFile->watchedFilename(), '/') .'/'. $modifiedFile->eventFilename());
 
                 foreach ($job->generator() as $file) {
-                    $this->showMessage($transmitter, sprintf(
-                        'Indexed: %s',
-                        basename($file)
-                    ));
+                    yield new Delayed(1);
                 }
             }
 
