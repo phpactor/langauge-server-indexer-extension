@@ -8,6 +8,7 @@ class FileModification
      * @var string
      */
     private $watchedFilename;
+
     /**
      * @var string
      */
@@ -24,9 +25,24 @@ class FileModification
         $this->eventFilename = $eventFilename;
     }
 
-    public static function fromCsvString(string $read)
+    public static function fromCsvString(string $read): self
     {
         $read = str_getcsv($read);
         return new self(...$read);
+    }
+
+    public function watchedFilename(): string
+    {
+        return $this->watchedFilename;
+    }
+
+    public function eventNames(): string
+    {
+        return $this->eventNames;
+    }
+
+    public function eventFilename(): string
+    {
+        return $this->eventFilename;
     }
 }

@@ -7,6 +7,7 @@ use Amp\Promise;
 use Generator;
 use Phpactor\Extension\LanguageServerWorkspaceQuery\Watcher\FileModification;
 use Phpactor\Extension\LanguageServerWorkspaceQuery\Watcher\Watcher;
+use Psr\Log\LoggerInterface;
 
 class InotifyWatcher implements Watcher
 {
@@ -27,9 +28,15 @@ class InotifyWatcher implements Watcher
      */
     private $path;
 
-    public function __construct(string $path)
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(string $path, LoggerInterface $logger)
     {
         $this->path = $path;
+        $this->logger = $logger;
     }
 
     /**
@@ -41,6 +48,7 @@ class InotifyWatcher implements Watcher
             if (!$this->processStarted) {
                 $this->process = yield $this->startProcess();
                 $this->processStarted = true;
+
             }
 
             return \Amp\call(function () {
@@ -56,8 +64,15 @@ class InotifyWatcher implements Watcher
 
                         $read = $this->buffer;
                         $this->buffer = '';
+                        $modification = FileModification::fromCsvString($read);
+                        $this->logger->debug(sprintf(
+                            '%s %s %s',
+                            $modification->watchedFilename(),
+                            $modification->eventNames(),
+                            $modification->eventFilename()
+                        ));
 
-                        return FileModification::fromCsvString($read);
+                        return $modification;
                     }
                 }
 
@@ -79,6 +94,11 @@ class InotifyWatcher implements Watcher
             ]);
 
             $pid = yield $process->start();
+            $this->logger->debug(sprintf(
+                'Inotify (pid:%s): %s ',
+                $pid,
+                $process->getCommand()
+            ));
 
             if (!$process->isRunning()) {
                 throw new RuntimeException(sprintf(

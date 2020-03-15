@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Phpactor\Extension\LanguageServerWorkspaceQuery\Watcher\FileModification;
 use Phpactor\Extension\LanguageServerWorkspaceQuery\Watcher\Watcher\InotifyWatcher;
 use Phpactor\TestUtils\Workspace;
+use Psr\Log\NullLogger;
 
 class InotifyWatcherTest extends TestCase
 {
@@ -22,7 +23,7 @@ class InotifyWatcherTest extends TestCase
 
     public function testWatch()
     {
-        $watcher = new InotifyWatcher($this->workspace->path());
+        $watcher = new InotifyWatcher($this->workspace->path(), new NullLogger());
         $promise = \Amp\call(function () use ($watcher) {
             return yield $watcher->wait();
         });
