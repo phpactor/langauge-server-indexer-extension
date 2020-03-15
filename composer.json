@@ -10,11 +10,16 @@
             "email": "daniel@dantleech.com"
         }
     ],
-
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:dantleech/php-language-server-protocol"
+        }
+    ],
     "require": {
         "phpactor/container": "^1.0",
         "phpactor/language-server-extension": "^0.2",
-        "phpactor/workspace-query": "^0.2.0",
+        "phpactor/workspace-query": "^0.1.4",
         "phpactor/worse-reflection-extension": "^0.2.1"
     },
     "require-dev": {
